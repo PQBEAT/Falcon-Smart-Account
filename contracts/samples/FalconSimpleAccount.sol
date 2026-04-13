@@ -12,7 +12,6 @@ import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import "../core/BaseAccount.sol";
 import "../core/Helpers.sol";
 import "./callback/TokenCallbackHandler.sol";
-import "./ZKNOX_NTT.sol";
 import "./ZKNOX_falcon.sol";
 /**
   * minimal account.
@@ -22,14 +21,10 @@ import "./ZKNOX_falcon.sol";
   */
 contract FalconSimpleAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeable, Initializable {
     address public owner;
-    address public psi_rev;
-    address public psi_inv_rev;
     uint256[] public publicKey;
 
     IEntryPoint private immutable _entryPoint;
     ZKNOX_falcon private falcon;
-    ZKNOX_NTT private ntt;
-    ZKNOX_HashToPoint private h2p = new ZKNOX_HashToPoint();
 
     event FalconSimpleAccountInitialized(IEntryPoint indexed entryPoint, address indexed owner);
 
@@ -95,17 +90,14 @@ contract FalconSimpleAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeab
       * the implementation by calling `upgradeTo()`
       * @param anOwner the owner (signer) of this account
      */
-    function initialize(address anOwner, uint256[] memory aPublicKey, address aApsi_rev, address aApsi_inrev) public virtual initializer {
-        _initialize(anOwner,aPublicKey,aApsi_rev, aApsi_inrev);
+    function initialize(address anOwner, uint256[] memory aPublicKey, address falconVerifier) public virtual initializer {
+        _initialize(anOwner, aPublicKey, falconVerifier);
     }
 
-    function _initialize(address anOwner,uint256[] memory aPublicKey, address aApsi_rev, address aApsi_inrev) internal virtual {
+    function _initialize(address anOwner, uint256[] memory aPublicKey, address falconVerifier) internal virtual {
         owner = anOwner;
         publicKey = aPublicKey;
-        psi_rev = aApsi_rev;
-        psi_inv_rev = aApsi_inrev;
-        ntt = new ZKNOX_NTT(psi_rev, psi_inv_rev, 12289, 12265);
-        falcon = new ZKNOX_falcon(ntt, h2p);
+        falcon = ZKNOX_falcon(falconVerifier);
         emit FalconSimpleAccountInitialized(_entryPoint, owner);
     }
 

@@ -142,13 +142,26 @@ describe('FalconSimpleAccount', function () {
       entryPointEoa = accounts[2]
       const epAsSigner = await ethers.getSigner(entryPointEoa)
 
+      // Pre-deploy the Falcon verifier stack separately to stay under the 24KB contract size limit
+      const FalconConstantsFactory = await ethers.getContractFactory("FalconConstants");
+      const falconConstants = await FalconConstantsFactory.deploy();
+
+      const H2PFactory = await ethers.getContractFactory("ZKNOX_HashToPoint");
+      const h2p = await H2PFactory.deploy();
+
+      const NTTFactory = await ethers.getContractFactory("ZKNOX_NTT", {
+        libraries: {}
+      });
+      const ntt = await NTTFactory.deploy(falconConstants.address, falconConstants.address, 12289, 12265);
+
+      const FalconFactory = await ethers.getContractFactory("ZKNOX_falcon");
+      const falconVerifier = await FalconFactory.deploy(ntt.address, h2p.address);
+
       // cant use "SimpleAccountFactory", since it attempts to increment nonce first
       const implementation = await new FalconSimpleAccount__factory(ethersSigner).deploy(entryPointEoa)
       const proxy = await new ERC1967Proxy__factory(ethersSigner).deploy(implementation.address, '0x')
       account = FalconSimpleAccount__factory.connect(proxy.address, epAsSigner)
-      const FalconConstantsFactory = await ethers.getContractFactory("FalconConstants");
-      const falconConstants = await FalconConstantsFactory.deploy();
-      account.initialize(accountOwner.address,Array.from(publicKey), falconConstants.address, falconConstants.address)
+      await account.initialize(accountOwner.address, Array.from(publicKey), falconVerifier.address)
 
       await ethersSigner.sendTransaction({ from: accounts[0], to: account.address, value: parseEther('0.2') })
       const callGasLimit = 200000
