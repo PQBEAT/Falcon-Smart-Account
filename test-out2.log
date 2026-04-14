@@ -1,0 +1,18 @@
+No need to generate any newer typings.
+duplicate definition - constructor
+duplicate definition - addStake(uint32)
+duplicate definition - unlockStake()
+duplicate definition - withdrawStake(address)
+duplicate definition - withdrawTo(address,uint256)
+duplicate definition - constructor
+duplicate definition - balanceOf(address)
+
+
+  FalconSimpleAccount
+    #validateUserOp
+validating signature...
+      ✔ should pay
+
+
+  1 passing (21s)
+

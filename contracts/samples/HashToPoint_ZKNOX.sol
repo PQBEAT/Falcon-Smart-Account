@@ -80,7 +80,8 @@ contract ZKNOX_HashToPoint {
         // return hashed;
         uint256 k = (1 << 16) / q;
         ZKNOX_keccak_prng keccak_prng = new ZKNOX_keccak_prng();
-        keccak_prng.inject(abi.encodePacked(msgHash, salt));
+        // C implementation injects nonce (salt) first, then message (msgHash)
+        keccak_prng.inject(abi.encodePacked(salt, msgHash));
         keccak_prng.flip();
 
         uint256 kq = k * q;

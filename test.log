@@ -1,0 +1,27 @@
+No need to generate any newer typings.
+duplicate definition - constructor
+duplicate definition - addStake(uint32)
+duplicate definition - unlockStake()
+duplicate definition - withdrawStake(address)
+duplicate definition - withdrawTo(address,uint256)
+duplicate definition - constructor
+duplicate definition - balanceOf(address)
+
+
+  FalconSimpleAccount
+    #validateUserOp
+      1) "before all" hook for "should pay"
+
+
+  0 passing (20s)
+  1 failing
+
+  1) FalconSimpleAccount
+       #validateUserOp
+         "before all" hook for "should pay":
+     Error: salt must be 88 bytes
+      at Object.sign (/home/agate/Projects/falcon-sign-js/src/api.js:95:11)
+      at Context.<anonymous> (test/falcon-simple-wallet.test.ts:172:31)
+
+
+

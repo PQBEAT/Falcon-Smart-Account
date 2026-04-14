@@ -109,7 +109,8 @@ contract FalconSimpleAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeab
     /// implement template method of BaseAccount
     function _validateSignature(PackedUserOperation calldata userOp, bytes32 userOpHash)
     internal override virtual returns (uint256 validationData) {
-        console.log("validating signature...");
+        console.log("validating signature, received userOpHash:");
+        console.logBytes32(userOpHash);
 
         // Decode s2 coefficients and salt from userOp.signature
         (uint256[512] memory s2, bytes memory salt) = abi.decode(userOp.signature, (uint256[512], bytes));
@@ -120,7 +121,11 @@ contract FalconSimpleAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeab
         }
         sig.salt = salt;
 
-        if (!falcon.verify(abi.encodePacked(userOpHash), sig, publicKey)) {
+        bool success = falcon.verify(abi.encodePacked(userOpHash), sig, publicKey);
+        console.log("falcon.verify result:");
+        console.log(success);
+        
+        if (!success) {
             return SIG_VALIDATION_FAILED;
         }
         return SIG_VALIDATION_SUCCESS;
