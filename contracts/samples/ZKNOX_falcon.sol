@@ -109,6 +109,18 @@ contract ZKNOX_falcon {
             norm += s1[i] * s1[i];
             norm += s2[i] * s2[i];
         }
+        
+        console.log("norm computed:");
+        console.log(norm);
+        console.log("sigBound:");
+        console.log(sigBound);
+        console.log("s1[0]:");
+        console.log(s1[0]);
+        console.log("s2[0]:");
+        console.log(s2[0]);
+        console.log("h[0]:");
+        console.log(h[0]);
+
         if (norm > sigBound) {
             result = false;
         } else {
